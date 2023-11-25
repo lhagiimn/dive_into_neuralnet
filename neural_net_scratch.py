@@ -53,9 +53,10 @@ class ScratchSimpleNeuralNetrowkClassifier():
                  n_nodes1=400,
                  n_nodes2=200,
                  n_output=10,
-                 sigma=0.005,
+                 sigma=0.05,
                  lr=0.01,
-                 epoch=5, verbose=True):
+                 epoch=20,
+                 verbose=True):
         self.verbose = verbose
         self.batch_size = batch_size
         self.n_features = n_features
@@ -165,7 +166,7 @@ y_pred = model_nn.predict(X_test)
 num = 36 #
 
 true_false = y_pred == y_test
-false_list = np.where(true_false==False)[0].astype(int)
+false_list = np.where(true_false==True)[0].astype(int)
 X_test = X_test*255.0
 
 if false_list.shape[0] < num:
