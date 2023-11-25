@@ -144,6 +144,9 @@ class ScratchSimpleNeuralNetrowkClassifier():
 X_train = X_train.reshape(-1, 784)
 X_test = X_test.reshape(-1, 784)
 
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
 X_train = X_train[:500, :]
 X_test = X_test[:500, :]
 y_train = y_train[:500]
@@ -156,8 +159,22 @@ y_test_one_hot = enc.transform(y_test[:, np.newaxis])
 model_nn = ScratchSimpleNeuralNetrowkClassifier(batch_size=4)
 
 model_nn.fit(X_train, y_train_one_hot, X_test, y_test_one_hot)
-pred = model_nn.predict(X_test[0, :])
+y_pred = model_nn.predict(X_test)
 
 #visualize
+num = 36 #
 
+true_false = y_pred == y_test
+false_list = np.where(true_false==False)[0].astype(np.int)
+X_test = X_test*255.0
+
+if false_list.shape[0] < num:
+    num = false_list.shape[0]
+fig = plt.figure(figsize=(6, 6))
+fig.subplots_adjust(left=0, right=0.8,  bottom=0, top=0.8, hspace=1, wspace=0.5)
+for i in range(num):
+    ax = fig.add_subplot(6, 6, i + 1, xticks=[], yticks=[])
+    ax.set_title("{} / {}".format(y_pred[false_list[i]],y_test[false_list[i]]))
+    ax.imshow(X_test.reshape(-1,28,28)[false_list[i]], cmap='gray')
+plt.show()
 
