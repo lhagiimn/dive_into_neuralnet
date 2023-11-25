@@ -165,7 +165,7 @@ y_pred = model_nn.predict(X_test)
 num = 36 #
 
 true_false = y_pred == y_test
-false_list = np.where(true_false==False)[0].astype(np.int)
+false_list = np.where(true_false==False)[0].astype(int)
 X_test = X_test*255.0
 
 if false_list.shape[0] < num:
