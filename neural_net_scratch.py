@@ -148,7 +148,7 @@ X_train = X_train / 255.0
 X_test = X_test / 255.0
 
 X_train = X_train[:500, :]
-X_test = X_test[:500, :]
+X_test = X_test[:100, :]
 y_train = y_train[:500]
 y_test = y_test[:100]
 
