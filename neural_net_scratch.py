@@ -1,6 +1,7 @@
 import keras
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 from sklearn.preprocessing import OneHotEncoder
 
 class GetMiniBatch:
@@ -52,7 +53,7 @@ class ScratchSimpleNeuralNetrowkClassifier():
                  n_nodes1=400,
                  n_nodes2=200,
                  n_output=10,
-                 sigma=0.02,
+                 sigma=0.005,
                  lr=0.01,
                  epoch=5, verbose=True):
         self.verbose = verbose
@@ -68,8 +69,9 @@ class ScratchSimpleNeuralNetrowkClassifier():
         self.loss_val = []
 
     def fit(self, X, y, X_val=None, y_val=None):
-        self.parameter_initialize()
-        for _ in range(self.epoch):
+        (self.W1, self.W2, self.W3,
+         self.B1, self.B2, self.B3) = self.parameter_initialize()
+        for _ in tqdm(range(self.epoch)):
             get_mini_batch = GetMiniBatch(X, y, batch_size=self.batch_size)
             for mini_X_train, mini_y_train in get_mini_batch:
                 self.forward(mini_X_train)
@@ -86,13 +88,13 @@ class ScratchSimpleNeuralNetrowkClassifier():
                 print(self.loss_train, self.loss_val)
 
     def parameter_initialize(self):
-        self.W1 = self.sigma * np.random.randn(self.n_features, self.n_nodes1)
-        self.W2 = self.sigma * np.random.randn(self.n_nodes1, self.n_nodes2)
-        self.W3 = self.sigma * np.random.randn(self.n_nodes2, self.n_output)
-        self.B1 = self.sigma * np.random.randn(1, self.n_nodes1)
-        self.B2 = self.sigma * np.random.randn(1, self.n_nodes2)
-        self.B3 = self.sigma * np.random.randn(1, self.n_output)
-
+        W1 = self.sigma * np.random.randn(self.n_features, self.n_nodes1)
+        W2 = self.sigma * np.random.randn(self.n_nodes1, self.n_nodes2)
+        W3 = self.sigma * np.random.randn(self.n_nodes2, self.n_output)
+        B1 = self.sigma * np.random.randn(1, self.n_nodes1)
+        B2 = self.sigma * np.random.randn(1, self.n_nodes2)
+        B3 = self.sigma * np.random.randn(1, self.n_output)
+        return W1, W2, W3, B1, B2, B3
 
     def forward(self, X):
         self.A1 = X @ self.W1 + self.B1
@@ -137,10 +139,15 @@ class ScratchSimpleNeuralNetrowkClassifier():
         self.forward(X)
         return np.argmax(self.Z3, axis=1)
 
-
+#### Running Sctratch ###
 (X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
 X_train = X_train.reshape(-1, 784)
 X_test = X_test.reshape(-1, 784)
+
+X_train = X_train[:500, :]
+X_test = X_test[:500, :]
+y_train = y_train[:500]
+y_test = y_test[:100]
 
 enc = OneHotEncoder(handle_unknown='ignore', sparse=False)
 y_train_one_hot = enc.fit_transform(y_train[:, np.newaxis])
@@ -150,3 +157,7 @@ model_nn = ScratchSimpleNeuralNetrowkClassifier(batch_size=4)
 
 model_nn.fit(X_train, y_train_one_hot, X_test, y_test_one_hot)
 pred = model_nn.predict(X_test[0, :])
+
+#visualize
+
+
