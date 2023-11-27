@@ -72,7 +72,7 @@ class ScratchSimpleNeuralNetrowkClassifier():
     def fit(self, X, y, X_val=None, y_val=None):
         (self.W1, self.W2, self.W3,
          self.B1, self.B2, self.B3) = self.parameter_initialize()
-        for _ in tqdm(range(self.epoch)):
+        for ep in tqdm(range(self.epoch)):
             get_mini_batch = GetMiniBatch(X, y, batch_size=self.batch_size)
             for mini_X_train, mini_y_train in get_mini_batch:
                 self.forward(mini_X_train)
@@ -82,11 +82,11 @@ class ScratchSimpleNeuralNetrowkClassifier():
             if X_val is not None:
                 self.forward(X_val)
                 self.loss_val.append(self.cross_entropy_error(y_val, self.Z3))
-        if self.verbose:
-            if X_val is None:
-                print(self.loss_train)
-            else:
-                print(self.loss_train, self.loss_val)
+            if self.verbose:
+                if X_val is None:
+                    print(self.loss_train[ep])
+                else:
+                    print(self.loss_train[ep], self.loss_val[ep])
 
     def parameter_initialize(self):
         W1 = self.sigma * np.random.randn(self.n_features, self.n_nodes1)
@@ -157,7 +157,7 @@ enc = OneHotEncoder(handle_unknown='ignore', sparse=False)
 y_train_one_hot = enc.fit_transform(y_train[:, np.newaxis])
 y_test_one_hot = enc.transform(y_test[:, np.newaxis])
 
-model_nn = ScratchSimpleNeuralNetrowkClassifier(batch_size=4)
+model_nn = ScratchSimpleNeuralNetrowkClassifier(batch_size=4, epoch=50)
 
 model_nn.fit(X_train, y_train_one_hot, X_test, y_test_one_hot)
 y_pred = model_nn.predict(X_test)
